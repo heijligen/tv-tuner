@@ -14,7 +14,7 @@ libfmt = {
 
 def main() -> None:
 
-    libs = ["calibration"]
+    libs = ["calibration", "fit", "mfile-root"]
     
     libray_path : str = os.path.join(sysconfig.get_paths()["platlib"], __package__, "lib")
     ROOT.gSystem.SetDynamicPath(libray_path + os.pathsep + ROOT.gSystem.GetDynamicPath())
@@ -28,4 +28,10 @@ def main() -> None:
             print("Loaded %s" % lib)
         
     cal = ROOT.HDTV.Calibration()
-    print(cal.E2Ch(2.0))
+    if cal.E2Ch(2.0) != 2.0:
+        print("Calibration call failed")
+        exit(-2)
+
+
+    # all done
+    print("ok")
