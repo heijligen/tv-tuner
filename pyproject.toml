@@ -1,0 +1,30 @@
+[project]
+name = "tv-tuner"
+version = "0.1.0"
+description = "Crossplatform testing for HDTV"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+tv-tuner = "tv_tuner:main"
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+build-dir = "build/{wheel_tag}"
+cmake.source-dir = "src/tv_tuner/rootext"
+
+[[tool.scikit-build.overrides]]
+if.platform-system = "^win32"
+cmake.define.CMAKE_GENERATOR_PLATFORM = "x64"
+
+[tool.uv]
+cache-keys = [
+  { file = "pyproject.toml" },
+  { file = "src/**/*.{h,c,hpp,cpp}" },
+  { file = "src/tv_tuner/rootext/CMakeLists.txt" }
+]
+
+[build-system]
+requires = ["scikit-build-core>=0.10", "pybind11"]
+build-backend = "scikit_build_core.build"
