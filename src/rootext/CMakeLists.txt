@@ -12,6 +12,6 @@ endif()
 
 
 add_subdirectory(calibration)
-# add_subdirectory(display)
+add_subdirectory(display)
 add_subdirectory(fit)
 add_subdirectory(mfile-root)
