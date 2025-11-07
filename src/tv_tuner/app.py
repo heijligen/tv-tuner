@@ -4,78 +4,87 @@ import sysconfig
 from pathlib import Path
 import os
 import sys
-import time
 
 import ROOT
 
-ok : bool = True
+from .calibration import test_calibration
+from .display import test_display
+from .fit import test_fit
+from .mfile_root import test_mfile_root
 
+libraries = ["calibration", "display", "fit", "mfile-root"]
 
-libs = ["calibration", "display", "fit", "mfile-root"]
-
-def load_lib(libs : List[str]) -> None:
-    """
-        Load the plugin libraries in ROOT
-    """
+def load_libraries(libs : List[str]) -> None:
+    libray_path : str = os.path.join(sysconfig.get_paths()["platlib"], __package__, "lib")
+    print("  Add Path %s" % libray_path)
+    ROOT.gSystem.SetDynamicPath(libray_path + os.pathsep + ROOT.gSystem.GetDynamicPath())
+    ROOT.gSystem.SetIncludePath(libray_path + os.pathsep + ROOT.gSystem.GetIncludePath())
+    
     libfmt = {
         "linux" : "lib%s.so",
         "darwin": "lib%s.dylib",
         "win32" :    "%s.dll",
     }[sys.platform]
 
-    # Get the path where the libraries are installed
-    libray_path : str = os.path.join(sysconfig.get_paths()["platlib"], __package__, "lib")
-    ROOT.gSystem.SetDynamicPath(libray_path + os.pathsep + ROOT.gSystem.GetDynamicPath())
-    ROOT.gSystem.SetIncludePath(libray_path + os.pathsep + ROOT.gSystem.GetIncludePath())
-
     for lib in libs:
         if ROOT.gSystem.Load(libfmt % lib) < 0:
-            print("Faild to load %s" % (libfmt % lib))
-            exit(-1)
+            raise RuntimeError("Failed to load %s", (libfmt % lib))
         else:
-            print("Loaded %s" % lib)
+            print("  Loaded %s" % lib)
 
 
-    # ROOT.gEnv.SetValue("X11.UseXft", 0)
-
-def test_calibration() -> None:
-    cal = ROOT.HDTV.Calibration()
-    if cal.E2Ch(2.0) != 2.0:
-        print("Calibration call failed")
-        exit(-2)
-
-def test_display() -> None:
-    if sys.platform == "linux":
-        None # TODO: Test for env DISPLAY=:0
+def main() -> None:    
+    print("tv-tuner -- hdtv test application")
+    print()
+    print("LOAD ROOTEXT")
     try:
-        viewer = ROOT.HDTV.Display.Viewer()
+        load_libraries(libraries)
     except Exception as e:
-        ok = False;
-        print("Failed to call ROOT.HDTV.Display.View()")
-        print("- - - - - - - - - - - - - - - -")
         print(e)
-        print("- - - - - - - - - - - - - - - -")
-    time.sleep(20)
-        
-def test_fit() -> None:
-    None
-
-def test_mfile() -> None:
-    None
-
-     
-def main() -> None:
-    #load all libraries
-    load_lib(libs)
-
-    # test the different components
-    test_calibration()
-    test_display()
-    test_fit()
-    test_mfile()
+        print("LOAD ROOTEXT - FAILED")
+        exit(1)
+    print("LOAD ROOTEXT - SUCCESS")
+    print()
     
-    # all done
-    if ok:
-        print("ok")
-    else:
-        print("Some tests failed. Plese send this output")
+    print("TEST CALIBRATION")
+    try:
+        test_calibration()
+    except Exception as e:
+        print(e)
+        print("TEST CALIBRATION - FAILED")
+        exit(2)
+    print("TEST CALIBRATION - SUCCESS")
+    print()
+
+    print("TEST DISPLAY")
+    try:
+        test_display()
+    except Exception as e:
+        print(e)
+        print("TEST DISPLAY - FAILED")
+        exit(2)
+    print("TEST DISPLAY - SUCCESS")
+    print()
+
+    print("TEST FIT")
+    try:
+        test_fit()
+    except Exception as e:
+        print(e)
+        print("TEST FIT - FAILED")
+        exit(2)
+    print("TEST FIT - SUCCESS")
+    print()
+
+    
+    print("TEST MFILE-ROOT")
+    try:
+        test_mfile_root()
+    except Exception as e:
+        print(e)
+        print("TEST MFILE-ROOT - FAILED")
+        exit(2)
+    print("TEST MFILE-ROOT - SUCCESS")
+    print()
+
+    print("OK")

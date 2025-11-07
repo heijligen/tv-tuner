@@ -79,7 +79,7 @@ public:
 
 //! Helper class to calculate various statistical moments (integral, mean, ...)
 //! of a histogram
-class Integral {
+class R__DLLEXPORT Integral {
 public:
   /*! Constructor
    * \param b1 First bin in sum (inclusive)
@@ -170,11 +170,11 @@ protected:
   CachedValue<double> fCRawSkewness, fCRawSkewnessError;
   CachedValue<double> fCSkewness, fCSkewnessError;
 
-  // ClassDef(HDTV::Fit::Integral, 0)
+  ClassDef(HDTV::Fit::Integral, 1)
 };
 
 //! Calculate moments of a TH1 histogram
-class TH1Integral : public Integral {
+class R__DLLEXPORT TH1Integral : public Integral {
 public:
   TH1Integral(TH1 *hist, double r1, double r2);
 
@@ -189,10 +189,12 @@ protected:
   double GetBinCenter(int bin) override { return fHist->GetBinCenter(bin); }
 
   const TH1 *fHist;
+
+  ClassDefOverride(HDTV::Fit::TH1Integral, 1)
 };
 
 //! Calculate moments of a background function (using a user-specified binning)
-class BgIntegral : public Integral {
+class R__DLLEXPORT BgIntegral : public Integral {
 public:
   BgIntegral(const Background *background, double r1, double r2, TAxis *axis);
 
@@ -208,10 +210,12 @@ protected:
 
   const Background *fBackground;
   const TAxis *fAxis;
+
+  ClassDefOverride(HDTV::Fit::BgIntegral, 1)
 };
 
 //! Calculate moments of a background-substracted TH1 histogram
-class TH1BgsubIntegral : public Integral {
+class R__DLLEXPORT TH1BgsubIntegral : public Integral {
 public:
   TH1BgsubIntegral(TH1 *hist, const Background *background, double r1, double r2);
 
@@ -222,6 +226,8 @@ protected:
 
   const TH1 *fHist;
   const Background *fBackground;
+
+  ClassDefOverride(HDTV::Fit::TH1BgsubIntegral, 1)
 };
 
 } // end namespace Fit
