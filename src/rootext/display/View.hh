@@ -41,7 +41,7 @@ namespace Display {
 
 //! Code shared between View1D and View2D
 /** Presently, this implements mostly the XOR cursor. */
-class View : public TGFrame {
+class R__DLLEXPORT View : public TGFrame {
 public:
   View(const TGWindow *p, UInt_t w, UInt_t h);
 

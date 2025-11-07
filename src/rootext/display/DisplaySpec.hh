@@ -29,12 +29,13 @@
 #include <TH1.h>
 
 #include "DisplayBlock.hh"
+#include "Painter.hh"
 
 namespace HDTV {
 namespace Display {
 
 //! Wrapper around a ROOT TH1 object being displayed
-class DisplaySpec : public DisplayBlock {
+class R__DLLEXPORT DisplaySpec : public DisplayBlock {
 public:
   explicit DisplaySpec(const TH1 *hist, int col = DEFAULT_COLOR);
 
@@ -110,6 +111,8 @@ private:
   double fCachedMax;
   bool fDrawUnderflowBin, fDrawOverflowBin;
   std::string fID; // ID for use by higher-level structures
+
+  // ClassDefOverride(DisplaySpec, 1)
 };
 
 } // end namespace Display
